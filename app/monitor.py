@@ -2,7 +2,7 @@ import psutil
 import pandas as pd
 
 # Подсчет количества CPU ядер
-CPU_COUNT = psutil.cpu_count()
+CPU_COUNT = psutil.cpu_count() or 1
 
 # Создание пустого датафрейма pandas
 df = pd.DataFrame()
@@ -37,9 +37,10 @@ def update_df():
     df.iloc[-1, CPU_COUNT+4] = psutil.disk_io_counters().read_bytes
     df.iloc[-1, CPU_COUNT+5] = psutil.net_io_counters().bytes_sent
     df.iloc[-1, CPU_COUNT+6] = psutil.net_io_counters().bytes_recv
-    df.iloc[-1, CPU_COUNT+7] = psutil.cpu_percent()  # Средняя загрузка CPU
+    df.loc[df.index[-1], 'cpu_avg'] = psutil.cpu_percent()  # Средняя загрузка CPU
 
     conections["test"] = "127.0.0.1"
+
 
 
 

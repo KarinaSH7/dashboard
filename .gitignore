@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.coverage
+.pytest_cache/
+*.lcov
+.DS_Store
+.idea/

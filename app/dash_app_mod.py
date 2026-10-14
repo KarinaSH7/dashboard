@@ -8,15 +8,15 @@ import psutil
 UPDATE_INTERVAL = 75
 
 # Инициализация экземпляра Dash приложения
-dash_app = Dash(__name__, requests_pathname_prefix="/dashboard/", title="Project_P", external_stylesheets=[dbc.themes.DARKLY])
-#dash_app = Dash(__name__, title="Project_P", external_stylesheets=[dbc.themes.DARKLY])
+dash_app = Dash(__name__, requests_pathname_prefix="/dashboard/", title="System Monitor", external_stylesheets=[dbc.themes.DARKLY])
+#dash_app = Dash(__name__, title="System Monitor", external_stylesheets=[dbc.themes.DARKLY])
 
 # Определение заголовка приложения
 header = dbc.Row(
     dbc.Col(
         [
             html.Div(style={"height": 30}),
-            html.H1("Project_P", className="text-center"),
+            html.H1("System Monitor", className="text-center"),
         ]
     ),
     className="mb-4",
@@ -128,7 +128,7 @@ dash_app.layout = dbc.Container(
                 # ),
             ]
         ),
-        dcc.Interval(id="timer", interval=UPDATE_INTERVAL),
+        dcc.Interval(id="timer", interval=UPDATE_INTERVAL * 1000),
     ],
     fluid=True,
     className='bg-dark',
@@ -144,7 +144,7 @@ dash_app.layout = dbc.Container(
 #     traces = list()
 #     for t in df.columns[:CPU_COUNT]:
 #         traces.append(
-#             plotly.graph_objs.Line(
+#             plotly.graph_objs.Scatter(mode="lines",
 #                 x=df.index,
 #                 y=df[t],
 #                 name=t
@@ -161,7 +161,7 @@ dash_app.layout = dbc.Container(
 #     # Построение графика средней загрузки CPU
 #     traces = list()
 #     traces.append(
-#         plotly.graph_objs.Line(
+#         plotly.graph_objs.Scatter(mode="lines",
 #             x=df.index,
 #             y=df['cpu_avg'],
 #             name='CPU Average'
@@ -177,7 +177,7 @@ dash_app.layout = dbc.Container(
     Input("update-interval-slider", "value")
 )
 def update_interval(value):
-    return value   # Переводим значение в миллисекунды
+    return value * 1000
 
 # Коллбэк для обновления отображаемых данных
 @dash_app.callback(
@@ -202,7 +202,7 @@ def update_graph(n):
     traces = list()
     for t in df.columns[:CPU_COUNT]:
         traces.append(
-            plotly.graph_objs.Line(
+            plotly.graph_objs.Scatter(mode="lines",
                 x=df.index,
                 y=df[t],
                 name=t
@@ -219,7 +219,7 @@ def update_cpu_avg_graph(n):
     # Построение графика средней загрузки CPU
     traces = list()
     traces.append(
-        plotly.graph_objs.Line(
+        plotly.graph_objs.Scatter(mode="lines",
             x=df.index,
             y=df['cpu_avg'],
             name='CPU Average'
@@ -237,11 +237,10 @@ def update_ram_graph(n):
     # Построение графика
     traces = list()
     traces.append(
-        plotly.graph_objs.Line(
+        plotly.graph_objs.Scatter(mode="lines",
             x=df.index,
             y=df['ram'],
             name='RAM',
-            yaxes_range=[0, 100]
         )
     )
     return {"data": traces, "layout": {"template": "plotly_dark", "yaxis": {"range": (0, 100)}}}# задаем размер 
@@ -255,7 +254,7 @@ def update_swap_graph(n):
     # Построение графика использования SWAP памяти
     traces = list()
     traces.append(
-        plotly.graph_objs.Line(
+        plotly.graph_objs.Scatter(mode="lines",
             x=df.index,
             y=df['swap'],
             name='SWAP'
@@ -273,7 +272,7 @@ def update_rom_graph(n):
     # Построение графика
     traces = list()
     traces.append(
-        plotly.graph_objs.Line(
+        plotly.graph_objs.Scatter(mode="lines",
             x=df.index,
             y=df['disk_usage'],
             name='ROM'
@@ -291,7 +290,7 @@ def update_network_graph(n):
     # Построение графика
     traces = list()
     traces.append(
-        plotly.graph_objs.Line(
+        plotly.graph_objs.Scatter(mode="lines",
             x=df.index,
             y=df['network_sent'],
             name='Sent'
@@ -299,7 +298,7 @@ def update_network_graph(n):
     )
 
     traces.append(
-        plotly.graph_objs.Line(
+        plotly.graph_objs.Scatter(mode="lines",
             x=df.index,
             y=df['network_received'],
             name='Received'
@@ -337,4 +336,4 @@ if __name__ == "__main__":
     # Обновление данных в мониторе перед запуском приложения
     update_df()
     # Запуск приложения
-    dash_app.run_server(debug=True)
+    dash_app.run(debug=True)
